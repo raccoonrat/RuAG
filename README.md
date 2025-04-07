@@ -1,75 +1,189 @@
-# RuAG: Learned-Rule-Augmented Generation
+# RuAG: Learned-Rule-Augmented Generation for Large Language Models
 
-RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，旨在提升生成文本的质量和可控性。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+
+> 论文出处：ICLR 2025  
+> 论文链接：[https://arxiv.org/abs/2411.03349](https://arxiv.org/abs/2411.03349)
+
+## 简介
+
+RuAG (Learned-Rule-Augmented Generation) 是一种通过学习到的逻辑规则增强大型语言模型生成能力的框架，旨在提高生成文本的质量、一致性和可控性。本框架通过从训练数据中自动提取高质量的逻辑规则，并将这些规则整合到生成过程中，使大型语言模型能够在生成时遵循这些规则，从而产生更加可靠和符合预期的输出。
+
+RuAG 框架的主要特点：
+
+1. **自动规则学习**：使用蒙特卡洛树搜索 (MCTS) 算法从训练数据中自动提取高质量的逻辑规则
+2. **规则增强生成**：将学习到的规则整合到大型语言模型的生成过程中
+3. **规则验证与调整**：对生成的文本进行规则验证，并在必要时进行调整
+4. **多任务支持**：支持关系抽取、日志异常检测等多种任务
 
 ## 安装
 
-1. 克隆仓库：
+### 环境要求
 
-   ```bash
-   git clone https://github.com/raccoonrat/RuAG.git
-   cd RuAG
+- Python 3.8+
+- PyTorch 1.10+
+- pandas, numpy, scikit-learn
+- OpenAI API (可选，用于使用 GPT 模型)
 
-2. 创建虚拟环境并安装依赖：
-   ```bash
-      python -m venv venv
-      source venv/bin/activate
-      pip install -r requirements.txt
-  
+### 安装步骤
 
-## 使用
-   ```bash
-   python src/main.py --input "example query" --output "generated_text.txt"
+```bash
+# 克隆仓库
+git clone https://github.com/raccoonrat/RuAG.git
+cd RuAG
 
+# 安装依赖
+pip install -r requirements.txt
+```
+
+## 项目结构
+```plaintext
+RuAG/
+├── config.py                # 全局配置文件
+├── data/                    # 数据模块
+│   ├── datasets/            # 示例数据集
+│   ├── rules/               # 规则存储
+│   └── utils/               # 数据处理工具
+├── examples/                # 示例代码
+│   ├── relation_extraction_example.py
+│   ├── log_anomaly_detection_example.py
+│   └── complete_pipeline_example.py
+├── src/                     # 源代码
+│   ├── rule_learning/       # 规则学习模块
+│   ├── integration/         # 规则整合模块
+│   ├── generation/          # 规则增强生成模块
+│   └── post_processing/     # 后处理模块
+└── tests/                   # 测试代码
+```
+
+## 快速开始
+### 关系抽取示例
+```python
+from config import Config
+from src.rule_learning import RuleExtractor
+from src.integration import RuleIntegrator
+from src.generation import RuleAugmentedGenerator
+from data.utils import DataLoader
+
+# 1. 加载数据
+loader = DataLoader()
+data = loader.load_data(task_type="relation")
+
+# 2. 提取规则
+rule_extractor = RuleExtractor()
+rules = rule_extractor.extract_rules(
+    data,
+    task_type="relation_extraction",
+    num_rules=10,
+    min_precision=0.5
+)
+
+# 3. 规则增强生成
+generator = RuleAugmentedGenerator(rules=rules)
+query = "分析以下文本中的实体关系：'梅西是巴塞罗那足球俱乐部的球员。'"
+response = generator.generate(query, context="梅西 球员 巴塞罗那")
+print(response)
+```
+
+### 日志异常检测示例
+```python
+from config import Config
+from src.rule_learning import RuleExtractor
+from src.integration import RuleIntegrator
+from src.generation import RuleAugmentedGenerator
+from data.utils import DataLoader
+
+# 1. 加载数据
+loader = DataLoader()
+data = loader.load_data(task_type="log")
+
+# 2. 提取规则
+rule_extractor = RuleExtractor()
+rules = rule_extractor.extract_rules(
+    data,
+    task_type="log_anomaly_detection",
+    num_rules=10,
+    min_precision=0.5
+)
+
+# 3. 规则增强生成
+generator = RuleAugmentedGenerator(rules=rules)
+query = "分析以下日志序列是否存在异常：'E1, E5, E7, E11, E12'"
+response = generator.generate(query, context="日志 E1 E5 E7 E11 E12")
+print(response)
+```
+### 使用命令行运行完整示例
+```bash
+# 运行关系抽取示例
+python examples/complete_pipeline_example.py --task relation --model gpt-3.5-turbo
+
+# 运行日志异常检测示例
+python examples/complete_pipeline_example.py --task log --model gpt-3.5-turbo
+```
+
+## 核心模块
+### 规则学习模块 (rule_learning)
+规则学习模块负责从训练数据中自动提取高质量的逻辑规则。主要组件包括：
+
+- 谓词定义 (predicate_definition.py) ：定义规则中使用的谓词
+- 谓词筛选 (predicate_filtering.py) ：筛选有用的谓词
+- MCTS 搜索 (mcts.py) ：使用蒙特卡洛树搜索算法搜索规则
+- 规则提取器 (rule_extractor.py) ：整合上述组件，提取规则
+### 规则整合模块 (integration)
+规则整合模块负责将学习到的规则整合到生成过程中。主要组件包括：
+
+- 规则整合器 (rule_integrator.py) ：将规则整合到提示中
+- 规则检索器 (rule_retriever.py) ：根据上下文检索相关规则
+### 规则增强生成模块 (generation)
+规则增强生成模块负责使用整合了规则的提示生成文本。主要组件包括：
+
+- LLM 提供者 (llm_provider.py) ：提供语言模型接口
+- 规则增强生成器 (rule_augmented_generator.py) ：使用规则增强生成文本
+### 后处理模块 (post_processing)
+后处理模块负责验证生成的文本是否符合规则，并在必要时进行调整。主要组件包括：
+
+- 规则验证器 (rule_validator.py) ：验证文本是否符合规则
+- 文本调整器 (text_adjuster.py) ：调整不符合规则的文本
+## 数据模块
+数据模块提供了示例数据集、规则存储和数据处理工具。详细信息请参阅 data/README.md 。
+
+## 示例代码
+示例目录包含了几个完整的示例，展示了 RuAG 框架的使用方法：
+
+- 关系抽取示例 (relation_extraction_example.py) ：展示如何使用 RuAG 框架进行关系抽取
+- 日志异常检测示例 (log_anomaly_detection_example.py) ：展示如何使用 RuAG 框架进行日志异常检测
+- 完整流程示例 (complete_pipeline_example.py) ：展示 RuAG 框架的完整工作流程
+
+## 论文引用
+如果您在研究中使用了 RuAG，请引用我们的论文：
+
+```bibtex
+@inproceedings{
+    ruag2025,
+    title={RuAG: Learned-Rule-Augmented Generation for Large Language Models},
+    author={Author Names},
+    booktitle={International Conference on Learning Representations},
+    year={2025},
+    url={https://arxiv.org/abs/2411.03349}
+}
+```
+
+
+## 许可证
+本项目采用 MIT 许可证。详情请参阅 LICENSE 文件。
 
 ## 贡献
+欢迎贡献代码、报告问题或提出改进建议。请遵循以下步骤：
 
-欢迎提交 PR 和 Issues！请查看 [CONTRIBUTING.md](CONTRIBUTING.md)。
+1. Fork 本仓库
+2. 创建您的特性分支 ( git checkout -b feature/amazing-feature )
+3. 提交您的更改 ( git commit -m 'Add some amazing feature' )
+4. 推送到分支 ( git push origin feature/amazing-feature )
+5. 打开一个 Pull Request
+## 联系方式
+如有任何问题，请通过以下方式联系我们：
 
-3. 核心文件内容
+- 电子邮件： example@example.com
+- GitHub Issues： https://github.com/raccoonrat/RuAG/issues
 
-4. 开发与测试
-
-**编写模块**
-  
-  * 根据需求逐步实现 `src/` 下各模块功能。
-  * 确保每个模块有独立的 `__init__.py`，支持导入。
-**测试**
-  
-  * 在 `tests/` 下编写单元测试，例如：
-    
-        # tests/test_data.py
-        import pytest
-        from src.data.preprocess import preprocess_data
-        
-        def test_preprocess():
-            assert preprocess_data("data/raw/test.csv", "data/processed/test.csv") is not None
-    
-  * 运行测试：
-    
-        pytest
-    
-
-* * *
-
-5. 提交到 GitHub
-
-**提交代码**：
-  
-      git add .
-      git commit -m "Initial project structure and core files"
-      git push origin main
-  
-**后续开发**：
-  
-  * 使用 feature 分支开发新功能，例如：
-    
-        git checkout -b feature/data-processing
-    
-
-* * *
-
-### 6. 文档完善
-
-* 在 `docs/api.md` 中记录模块 API。
-* 在 `docs/usage.md` 中提供详细使用示例。

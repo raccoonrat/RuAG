@@ -1,0 +1,23 @@
+[
+  {
+    "body": ["entity_a_type == '球员'", "entity_b_type == '球队'"],
+    "head": "relation == '效力于'",
+    "accuracy": 0.95,
+    "task_type": "relation_extraction",
+    "keywords": ["球员", "球队", "效力于", "关系", "实体", "抽取"]
+  },
+  {
+    "body": ["entity_a == '梅西'", "entity_b == '巴塞罗那'"],
+    "head": "relation == '效力于'",
+    "accuracy": 0.98,
+    "task_type": "relation_extraction",
+    "keywords": ["梅西", "巴塞罗那", "效力于", "关系", "实体", "抽取"]
+  },
+  {
+    "body": ["entity_a == 'C罗'", "entity_b == '曼联'"],
+    "head": "relation == '效力于'",
+    "accuracy": 0.97,
+    "task_type": "relation_extraction",
+    "keywords": ["C罗", "曼联", "效力于", "关系", "实体", "抽取"]
+  }
+]

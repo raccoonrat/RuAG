@@ -1,0 +1,23 @@
+[
+  {
+    "body": ["E11", "E7"],
+    "head": "abnormal",
+    "accuracy": 0.95,
+    "task_type": "log_anomaly_detection",
+    "keywords": ["日志", "异常", "检测", "E11", "E7"]
+  },
+  {
+    "body": ["E3", "E5", "E9"],
+    "head": "abnormal",
+    "accuracy": 0.92,
+    "task_type": "log_anomaly_detection",
+    "keywords": ["日志", "异常", "检测", "E3", "E5", "E9"]
+  },
+  {
+    "body": ["E1", "E4", "E8"],
+    "head": "not abnormal",
+    "accuracy": 0.88,
+    "task_type": "log_anomaly_detection",
+    "keywords": ["日志", "正常", "检测", "E1", "E4", "E8"]
+  }
+]
