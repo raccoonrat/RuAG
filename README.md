@@ -11,7 +11,6 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
    cd RuAG
 
 2. 创建虚拟环境并安装依赖：
-  
    ```bash
       python -m venv venv
       source venv/bin/activate
@@ -19,9 +18,8 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
   
 
 ## 使用
-
    ```bash
-    python src/main.py --input "example query" --output "generated_text.txt"
+   python src/main.py --input "example query" --output "generated_text.txt"
 
 
 ## 贡献
@@ -56,13 +54,13 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
 
 5. 提交到 GitHub
 
-1. **提交代码**：
+**提交代码**：
   
       git add .
       git commit -m "Initial project structure and core files"
       git push origin main
   
-2. **后续开发**：
+**后续开发**：
   
   * 使用 feature 分支开发新功能，例如：
     
