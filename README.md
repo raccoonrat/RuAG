@@ -23,6 +23,7 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
    ```bash
     python src/main.py --input "example query" --output "generated_text.txt"
 
+
 ## 贡献
 
 欢迎提交 PR 和 Issues！请查看 [CONTRIBUTING.md](CONTRIBUTING.md)。
@@ -31,11 +32,11 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
 
 4. 开发与测试
 
-1. **编写模块**
+**编写模块**
   
   * 根据需求逐步实现 `src/` 下各模块功能。
   * 确保每个模块有独立的 `__init__.py`，支持导入。
-2. **测试**
+**测试**
   
   * 在 `tests/` 下编写单元测试，例如：
     
@@ -53,7 +54,7 @@ RuAG 是一个结合逻辑规则学习和大型语言模型（LLM）的框架，
 
 * * *
 
-### 5. 提交到 GitHub
+5. 提交到 GitHub
 
 1. **提交代码**：
   
