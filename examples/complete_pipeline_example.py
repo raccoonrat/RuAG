@@ -14,7 +14,7 @@ from src.rule_learning import RuleExtractor, RuleTranslator, DataProcessor
 from src.integration import RuleIntegrator
 from src.generation import RuleAugmentedGenerator
 from src.post_processing import RuleValidator, TextAdjuster
-from src.generation.llm_provider import MockLLMProvider, OpenAIProvider
+from src.generation.llm_provider import MockLLMProvider, OpenAIProvider, DeepSeekProvider
 
 
 def parse_args():
@@ -43,6 +43,13 @@ def get_llm_provider(model_name):
             return OpenAIProvider(model=model_name)
         except Exception as e:
             print(f"OpenAI API初始化失败：{e}")
+            print("使用模拟LLM提供者代替")
+            return MockLLMProvider()
+    elif model_name == "deepseek":
+        try:
+            return DeepSeekProvider()
+        except Exception as e:
+            print(f"DeepSeek API初始化失败：{e}")
             print("使用模拟LLM提供者代替")
             return MockLLMProvider()
     else:

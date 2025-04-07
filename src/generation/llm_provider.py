@@ -93,3 +93,60 @@ class MockLLMProvider(LLMProvider):
         """
         # 简单的模拟响应，实际应用中可以根据prompt内容生成更复杂的响应
         return f"这是对提示的模拟响应：\n{prompt[:100]}...\n\n这是一个模拟的语言模型生成的文本，用于测试RuAG框架。"
+
+
+class DeepSeekProvider:
+    """DeepSeek LLM 提供者"""
+    
+    def __init__(self, api_key=None, base_url="https://api.deepseek.com/v1"):
+        """
+        初始化DeepSeek提供者
+        
+        Args:
+            api_key: DeepSeek API key，如果为None则从环境变量读取
+            base_url: DeepSeek API 基础URL
+        """
+        self.api_key = api_key or os.getenv("DEEPSEEK_API_KEY")
+        if not self.api_key:
+            raise ValueError("未提供DeepSeek API key")
+        
+        self.base_url = base_url
+        self.client = requests.Session()
+        self.client.headers.update({
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        })
+    
+    def generate(self, prompt, context=None, max_tokens=512, temperature=0.7):
+        """
+        生成文本
+        
+        Args:
+            prompt: 提示文本
+            context: 上下文文本
+            max_tokens: 最大token数
+            temperature: 温度参数
+            
+        Returns:
+            str: 生成的文本
+        """
+        messages = []
+        if context:
+            messages.append({"role": "system", "content": context})
+        messages.append({"role": "user", "content": prompt})
+        
+        data = {
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature
+        }
+        
+        try:
+            response = self.client.post(
+                f"{self.base_url}/chat/completions",
+                json=data
+            )
+            response.raise_for_status()
+            return response.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            raise RuntimeError(f"DeepSeek API调用失败：{e}")
