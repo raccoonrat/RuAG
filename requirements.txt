@@ -1,0 +1,7 @@
+pandas
+numpy
+transformers
+openai
+scikit-learn
+pytest
+streamlit
