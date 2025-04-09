@@ -150,3 +150,56 @@ class DeepSeekProvider:
             return response.json()["choices"][0]["message"]["content"]
         except Exception as e:
             raise RuntimeError(f"DeepSeek API调用失败：{e}")
+
+
+class VolcArkDeepSeekProvider(LLMProvider):
+    """
+    火山方舟DeepSeek R1模型提供者
+    """
+    
+    def __init__(self, api_key=None, base_url="https://ark.cn-beijing.volces.com/api/v3"):
+        """
+        初始化火山方舟DeepSeek提供者
+        
+        Args:
+            api_key: API密钥，如果为None则从环境变量读取
+            base_url: API基础URL
+        """
+        self.api_key = api_key or os.getenv("ARK_API_KEY")
+        if not self.api_key:
+            raise ValueError("未提供火山方舟DeepSeek API key")
+        
+        self.client = OpenAI(
+            api_key=self.api_key,
+            base_url=base_url
+        )
+        self.model_endpoint = "ep-20250221111131-nnmmq"  # 替换为你的模型端点ID
+    
+    def __call__(self, prompt: str, context: str = None, max_tokens: int = 512, temperature: float = 0.7) -> str:
+        """
+        调用火山方舟DeepSeek API生成文本
+        
+        Args:
+            prompt: 提示文本
+            context: 上下文文本
+            max_tokens: 最大token数
+            temperature: 温度参数
+            
+        Returns:
+            str: 生成的文本
+        """
+        messages = []
+        if context:
+            messages.append({"role": "system", "content": context})
+        messages.append({"role": "user", "content": prompt})
+        
+        try:
+            completion = self.client.chat.completions.create(
+                model=self.model_endpoint,
+                messages=messages,
+                max_tokens=max_tokens,
+                temperature=temperature
+            )
+            return completion.choices[0].message.content
+        except Exception as e:
+            raise RuntimeError(f"火山方舟DeepSeek API调用失败：{e}")

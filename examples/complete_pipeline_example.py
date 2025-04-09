@@ -43,14 +43,18 @@ def get_llm_provider(model_name):
             return OpenAIProvider(model=model_name)
         except Exception as e:
             print(f"OpenAI API初始化失败：{e}")
-            print("使用模拟LLM提供者代替")
             return MockLLMProvider()
     elif model_name == "deepseek":
         try:
             return DeepSeekProvider()
         except Exception as e:
             print(f"DeepSeek API初始化失败：{e}")
-            print("使用模拟LLM提供者代替")
+            return MockLLMProvider()
+    elif model_name == "volc-ark-deepseek":
+        try:
+            return VolcArkDeepSeekProvider()
+        except Exception as e:
+            print(f"火山方舟DeepSeek API初始化失败：{e}")
             return MockLLMProvider()
     else:
         print(f"未知模型：{model_name}，使用模拟LLM提供者")
