@@ -26,4 +26,10 @@ class RuleValidator:
             tuple: (is_valid, violations)
         """
         # Implement validation logic here
-        return True, []
+        violations = []
+        is_valid = True
+        
+        # 这里添加实际的规则验证逻辑
+        # 遍历self.rules并检查text是否符合规则
+        
+        return is_valid, violations

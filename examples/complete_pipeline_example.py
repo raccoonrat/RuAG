@@ -14,7 +14,7 @@ from src.rule_learning import RuleExtractor, RuleTranslator, DataProcessor
 from src.integration import RuleIntegrator
 from src.generation import RuleAugmentedGenerator
 from src.post_processing import RuleValidator, TextAdjuster
-from src.generation.llm_provider import MockLLMProvider, OpenAIProvider, DeepSeekProvider
+from src.generation.llm_provider import MockLLMProvider, OpenAIProvider, DeepSeekProvider, VolcArkDeepSeekProvider
 
 
 def parse_args():
@@ -190,7 +190,7 @@ def main():
     adjuster = TextAdjuster(llm_provider, rules, validator)
     
     # 验证生成的文本
-    is_valid, violations = validator.validate(response, context, rules)
+    is_valid, violations = validator.validate(response, context)  # 移除了rules参数
     
     if is_valid:
         print("生成的文本符合所有规则约束")
