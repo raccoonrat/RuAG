@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuAG - 规则增强生成框架演示</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- 引入第三方库 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>RuAG - 规则增强生成框架</h1>
+        <p class="subtitle">自动规则学习与增强生成的可视化演示</p>
+    </header>
+
+    <main>
+        <div class="control-panel">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="relation">关系抽取</button>
+                <button class="tab-btn" data-tab="anomaly">日志异常检测</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="model-select">选择模型:</label>
+                <select id="model-select">
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="claude-2">Claude 2</option>
+                    <option value="llama-2">Llama 2</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="input-query">输入查询:</label>
+                <textarea id="input-query" rows="4" placeholder="请输入您的查询...">分析文本中梅西的俱乐部关系</textarea>
+            </div>
+            
+            <div class="button-group">
+                <button id="run-btn" class="primary-btn">运行演示</button>
+                <button id="prev-step-btn" class="step-btn" disabled>上一步</button>
+                <button id="next-step-btn" class="step-btn">下一步</button>
+            </div>
+            
+            <div class="status-bar">
+                <span id="status-message">准备就绪</span>
+                <span id="step-indicator"></span>
+            </div>
+        </div>
+        
+        <div class="visualization-panel">
+            <div class="viz-section">
+                <h2>处理流程</h2>
+                <div id="pipeline-viz" class="viz-container"></div>
+            </div>
+            
+            <div class="viz-section">
+                <h2>规则可视化</h2>
+                <div id="rules-viz" class="viz-container"></div>
+            </div>
+            
+            <div class="viz-section">
+                <h2>规则学习过程</h2>
+                <div id="mcts-viz" class="viz-container"></div>
+            </div>
+            
+            <div class="viz-section">
+                <h2>效果对比</h2>
+                <div id="comparison-viz" class="viz-container"></div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>RuAG - 规则增强生成框架 © 2023</p>
+    </footer>
+
+    <!-- 引入自定义脚本 -->
+    <script src="js/rule-visualizer.js"></script>
+    <script src="js/mcts-visualizer.js"></script>
+    <script src="js/comparison-visualizer.js"></script>
+    <script src="js/demo-flow.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        // 初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose'
+        });
+        
+        // 切换标签页
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
