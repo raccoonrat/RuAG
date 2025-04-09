@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from .llm_provider import LLMProvider
+from src.generation.llm_provider import LLMProvider  # Updated import path
 from .rule_validator import RuleValidator
 
 class TextAdjuster:
