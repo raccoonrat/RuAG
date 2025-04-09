@@ -74,6 +74,9 @@ class DemoFlow {
             // 保存结果数据
             this.demoData = data;
             
+            // 更新API_KEY显示
+            document.getElementById('api-key-display').value = data.modelApiKey;
+            
             // 更新状态
             document.getElementById('status-message').textContent = '演示就绪';
             

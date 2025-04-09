@@ -32,31 +32,79 @@ const mockRules = [
         condition: "entity_a_梅西",
         prediction: "relation_效力于",
         accuracy: 1.0,
-        translated: "当检测到实体A为"梅西"时，可以确定其存在"效力于"的关联关系，该判断的置信度为100%。"
+        translated: "当检测到实体A为\"梅西\"时，可以确定其存在\"效力于\"的关联关系，该判断的置信度为100%。"
     }
 ];
 
 // API路由
-app.post('/api/run', (req, res) => {
+function getLLMProvider(modelName) {
+    if (modelName === "mock") {
+        return { 
+            generate: (query, context) => "这是模拟LLM生成的响应",
+            name: "Mock LLM",
+            apiKey: "不需要API_KEY"
+        };
+    } else if (modelName === "gpt-3.5-turbo" || modelName === "gpt-4") {
+        return {
+            generate: async (query, context) => {
+                // 这里实现OpenAI API调用
+                return "这是GPT生成的响应";
+            },
+            name: modelName,
+            apiKey: process.env.OPENAI_API_KEY || "未设置OPENAI_API_KEY"
+        };
+    } else if (modelName === "deepseek") {
+        return {
+            generate: async (query, context) => {
+                // 这里实现DeepSeek API调用
+                return "这是DeepSeek生成的响应";
+            },
+            name: "DeepSeek",
+            apiKey: process.env.DEEPSEEK_API_KEY || "未设置DEEPSEEK_API_KEY"
+        };
+    } else if (modelName === "volc-ark-deepseek") {
+        return {
+            generate: async (query, context) => {
+                // 这里实现火山方舟DeepSeek API调用
+                return "这是火山方舟DeepSeek生成的响应";
+            },
+            name: "火山方舟DeepSeek",
+            apiKey: process.env.VOLC_ARK_API_KEY || "未设置VOLC_ARK_API_KEY"
+        };
+    } else {
+        return {
+            generate: (query, context) => "未知模型，使用模拟响应",
+            name: "Unknown Model",
+            apiKey: "未知模型"
+        };
+    }
+}
+
+app.post('/api/run', async (req, res) => {
     const { task, model, query } = req.body;
+    const llmProvider = getLLMProvider(model);
     
-    // 模拟处理延迟
-    setTimeout(() => {
-        // 返回模拟数据
+    try {
+        const response = await llmProvider.generate(query, "");
+        
         res.json({
             task,
-            model,
+            model: llmProvider.name,
+            modelApiKey: llmProvider.apiKey,
             query,
             rules: mockRules,
-            original_response: "根据文本分析，梅西是一名足球运动员，曾效力于巴塞罗那足球俱乐部和巴黎圣日耳曼足球俱乐部，目前效力于迈阿密国际足球俱乐部。",
-            enhanced_response: "根据文本分析，我识别到以下实体关系：\n\n实体：梅西（人物）\n实体：巴塞罗那足球俱乐部（组织）\n关系：效力于（历史）\n\n实体：梅西（人物）\n实体：巴黎圣日耳曼足球俱乐部（组织）\n关系：效力于（历史）\n\n实体：梅西（人物）\n实体：迈阿密国际足球俱乐部（组织）\n关系：效力于（当前）\n\n以上关系符合规则：当检测到实体A为"梅西"时，可以确定其存在"效力于"的关联关系。",
+            original_response: "原始响应示例",
+            enhanced_response: response,
             is_valid: true,
             violations: []
         });
-    }, 1500);
+    } catch (error) {
+        console.error('API调用失败:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // 启动服务器
-app.listen(PORT, () => {
-    console.log(`RuAG PoC 服务器运行在 http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`RuAG PoC 服务器运行在 http://0.0.0.0:${PORT}`);
 });

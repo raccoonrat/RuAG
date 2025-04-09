@@ -25,10 +25,11 @@
             <div class="input-group">
                 <label for="model-select">选择模型:</label>
                 <select id="model-select">
+                    <option value="mock">Mock LLM</option>
                     <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                     <option value="gpt-4">GPT-4</option>
-                    <option value="claude-2">Claude 2</option>
-                    <option value="llama-2">Llama 2</option>
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="volc-ark-deepseek">火山方舟DeepSeek</option>
                 </select>
             </div>
             
@@ -46,6 +47,11 @@
             <div class="status-bar">
                 <span id="status-message">准备就绪</span>
                 <span id="step-indicator"></span>
+            </div>
+            <!-- 在控制面板部分添加 -->
+            <div class="input-group">
+                <label for="api-key-display">当前模型API_KEY:</label>
+                <input type="text" id="api-key-display" readonly>
             </div>
         </div>
         
