@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -69,7 +70,7 @@ function getLLMProvider(modelName) {
                 return "这是火山方舟DeepSeek生成的响应";
             },
             name: "火山方舟DeepSeek",
-            apiKey: process.env.VOLC_ARK_API_KEY || "未设置VOLC_ARK_API_KEY"
+            apiKey: process.env.ARK_API_KEY || "未设置ARK_API_KEY"
         };
     } else {
         return {

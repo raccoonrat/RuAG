@@ -218,6 +218,7 @@ class DemoFlow {
         infoDiv.innerHTML = `
             <h3>1. 初始化LLM提供者</h3>
             <p>当前使用模型: <strong>${this.demoData.model}</strong></p>
+            <p>API_KEY来源: <strong>环境变量</strong></p>
             <p>任务类型: <strong>${this.demoData.task === 'relation' ? '关系抽取' : '日志异常检测'}</strong></p>
             <p>查询内容:</p>
             <pre>${this.demoData.query}</pre>
