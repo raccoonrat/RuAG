@@ -81,25 +81,89 @@ function getLLMProvider(modelName) {
     }
 }
 
+// 在文件顶部添加监控相关模块
+const prometheus = require('prom-client');
+const responseTime = require('response-time');
+
+// 初始化监控指标
+const httpRequestDurationMicroseconds = new prometheus.Histogram({
+    name: 'http_request_duration_ms',
+    help: 'Duration of HTTP requests in ms',
+    labelNames: ['method', 'route', 'code'],
+    buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500]
+});
+
+const activeRequests = new prometheus.Gauge({
+    name: 'node_active_requests',
+    help: 'Number of active requests'
+});
+
+const totalRequests = new prometheus.Counter({
+    name: 'node_total_requests',
+    help: 'Total number of requests'
+});
+
+const errorRequests = new prometheus.Counter({
+    name: 'node_error_requests',
+    help: 'Total number of error requests'
+});
+
+// 在Express应用初始化后添加中间件
+app.use(responseTime((req, res, time) => {
+    httpRequestDurationMicroseconds
+        .labels(req.method, req.route.path, res.statusCode)
+        .observe(time);
+}));
+
+app.use((req, res, next) => {
+    activeRequests.inc();
+    totalRequests.inc();
+    next();
+});
+
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        activeRequests.dec();
+        if (res.statusCode >= 400) {
+            errorRequests.inc();
+        }
+    });
+    next();
+});
+
+// 添加监控端点
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', prometheus.register.contentType);
+    res.end(await prometheus.register.metrics());
+});
+
+// 在API路由中添加自定义指标
 app.post('/api/run', async (req, res) => {
-    const { task, model, query } = req.body;
-    const llmProvider = getLLMProvider(model);
-    
+    const start = Date.now();
     try {
-        const response = await llmProvider.generate(query, "");
+        const { task, model, query } = req.body;
+        const llmProvider = getLLMProvider(model);
         
-        res.json({
-            task,
-            model: llmProvider.name,
-            modelApiKey: llmProvider.apiKey,
-            query,
-            rules: mockRules,
-            original_response: "原始响应示例",
-            enhanced_response: response,
-            is_valid: true,
-            violations: []
-        });
+        try {
+            const response = await llmProvider.generate(query, "");
+            
+            res.json({
+                task,
+                model: llmProvider.name,
+                modelApiKey: llmProvider.apiKey,
+                query,
+                rules: mockRules,
+                original_response: "原始响应示例",
+                enhanced_response: response,
+                is_valid: true,
+                violations: []
+            });
+        } catch (error) {
+            console.error('API调用失败:', error);
+            res.status(500).json({ error: error.message });
+        }
     } catch (error) {
+        errorRequests.inc();
         console.error('API调用失败:', error);
         res.status(500).json({ error: error.message });
     }
