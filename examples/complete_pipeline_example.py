@@ -23,7 +23,7 @@ def parse_args():
     parser.add_argument("--task", type=str, default="relation", choices=["relation", "log"],
                         help="任务类型：relation（关系抽取）或log（日志异常检测）")
     parser.add_argument("--model", type=str, default="mock", 
-                        choices=["mock", "gpt-3.5-turbo", "gpt-4", “deepseek", "volc-ark-deepseek"],
+                        choices=["mock", "gpt-3.5-turbo", "gpt-4", "deepseek", "volc-ark-deepseek"],
                         help="使用的语言模型")
     parser.add_argument("--data", type=str, default=None,
                         help="数据文件路径，如果不提供则使用示例数据")
