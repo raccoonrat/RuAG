@@ -3,6 +3,7 @@
 """
 import os
 import requests
+from openai import OpenAI  # 添加OpenAI导入
 from typing import Dict, Any, Optional
 
 
