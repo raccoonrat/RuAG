@@ -650,103 +650,33 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 在DemoFlow类中添加
-initArchitectureDiagram() {
-    const architectureDiagram = `
-    graph TD
-        subgraph "RuAG框架"
-            A[用户查询] --> B[RuAG处理流程]
-            
-            subgraph "规则学习模块 (rule_learning)"
-                C1[数据处理器 DataProcessor] --> C2[规则提取器 RuleExtractor]
-                C2 --> C3[规则翻译器 RuleTranslator]
-                
-                subgraph "MCTS搜索算法"
-                    M1[选择阶段] --> M2[扩展阶段]
-                    M2 --> M3[模拟阶段]
-                    M3 --> M4[回溯阶段]
-                    M4 --> M1
-                end
-                
-                subgraph "谓词处理技术"
-                    P1[谓词定义与表示] --> P2[谓词空间搜索]
-                    P2 --> P3[谓词组合优化]
-                    P3 --> P4[谓词规则评估]
-                    P4 --> P5[谓词规则筛选]
-                end
-                
-                C2 -.-> M1
-                C2 -.-> P1
-            end
-            
-            subgraph "规则整合模块 (integration)"
-                D1[规则整合器 RuleIntegrator] --> D2[规则检索器]
-                D2 --> D3[规则优先级排序]
-            end
-            
-            subgraph "生成模块 (generation)"
-                E1[规则增强生成器 RuleAugmentedGenerator] --> E2[LLM提供者]
-                E2 --> E2_1[MockLLMProvider]
-                E2 --> E2_2[OpenAIProvider]
-                E2 --> E2_3[DeepSeekProvider]
-                E2 --> E2_4[VolcArkDeepSeekProvider]
-            end
-            
-            subgraph "后处理模块 (post_processing)"
-                F1[规则验证器 RuleValidator] --> F2[文本调整器 TextAdjuster]
-            end
-            
-            B --> C1
-            C3 --> D1
-            D3 --> E1
-            E1 --> F1
-            F2 --> G[最终输出]
-        end
-        
-        subgraph "创新点"
-            direction TB
-            I1[自动规则学习] --> I2[规则自然语言翻译]
-            I2 --> I3[规则增强生成]
-            I3 --> I4[规则验证与调整]
-            I4 --> I5[多模型支持]
-            
-            I6[谓词空间高效搜索] --> I7[谓词组合优化算法]
-            I7 --> I8[谓词规则评估机制]
-        end
-        
-        I1 -.-> C2
-        I2 -.-> C3
-        I3 -.-> E1
-        I4 -.-> F1
-        I5 -.-> E2
-        I6 -.-> P2
-        I7 -.-> P3
-        I8 -.-> P4
-        
-        subgraph "应用场景"
-            S1[关系抽取] -.-> B
-            S2[日志异常检测] -.-> B
-            S3[其他NLP任务] -.-> B
-        end
-        
-        classDef innovation fill:#f9f,stroke:#333,stroke-width:2px;
-        classDef module fill:#bbf,stroke:#333,stroke-width:1px;
-        classDef application fill:#bfb,stroke:#333,stroke-width:1px;
-        classDef predicate fill:#ffd700,stroke:#333,stroke-width:2px;
-        classDef mcts fill:#ff7f50,stroke:#333,stroke-width:2px;
-        
-        class I1,I2,I3,I4,I5,I6,I7,I8 innovation;
-        class C1,C2,C3,C4,D1,D2,D3,E1,E2,F1,F2 module;
-        class S1,S2,S3 application;
-        class P1,P2,P3,P4,P5 predicate;
-        class M1,M2,M3,M4 mcts;
-    `;
+initArchitectureModal() {
+    // 获取弹出框元素
+    const modal = document.getElementById('architecture-modal');
+    const btn = document.getElementById('architecture-btn');
+    const span = document.getElementsByClassName('close')[0];
 
-    document.getElementById('architecture-viz').innerHTML = `<div class="mermaid">${architectureDiagram}</div>`;
-    mermaid.init(undefined, '.mermaid');
+    // 点击按钮打开弹出框
+    btn.onclick = () => {
+        modal.style.display = 'block';
+        this.initArchitectureDiagram();
+    }
+
+    // 点击关闭按钮关闭弹出框
+    span.onclick = () => {
+        modal.style.display = 'none';
+    }
+
+    // 点击弹出框外部关闭
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
 }
 
-// 在构造函数中调用
+// 修改构造函数
 constructor() {
     // ... existing code ...
-    this.initArchitectureDiagram();
+    this.initArchitectureModal();
 }

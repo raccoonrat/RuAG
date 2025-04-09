@@ -77,8 +77,17 @@
             </div>
             <!-- 在可视化面板部分添加 -->
             <div class="viz-section">
-                <h2>项目架构图</h2>
-                <div id="architecture-viz" class="viz-container"></div>
+                <!-- 在控制面板部分添加 -->
+                <button id="architecture-btn" class="btn">查看项目架构图</button>
+                
+                <!-- 在页面底部添加弹出框 -->
+                <div id="architecture-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>RuAG项目架构图</h2>
+                        <div id="architecture-viz" class="viz-container"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
